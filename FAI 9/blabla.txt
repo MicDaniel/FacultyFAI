@@ -1,0 +1,175 @@
+									EXAMEN PROLOG
+
+
+
+%Afisarea unei liste
+afis([]).
+afis([Prim|Rest]):- write(Prim), tab(3), afis(Rest).
+
+%1) Ecuatia de gradul II
+ec_grI(A,B,X):- A = 0, X is B.
+ec_grI(A,B,X):- A \= 0, X is -B/A.
+delta(A,B,C,D):- D is B*B - 4*A*C.
+ec_grII(A,B,C,X1,X2):-A=0,B=0, write(C).
+ec_grII(A,B,C,X1,X2):-A=0, B \= 0, write("ecuatie de gr I"), ec_grI(B,C,Y), X1 is Y.
+ec_grII(A,B,C,X1,X2):-delta(A,B,C,D), D<0, write("radacini complexe").
+ec_grII(A,B,C,X1,X2):-delta(A,B,C,D), D=0, X1 is -B/(2*A).
+ec_grII(A,B,C,X1,X2):-delta(A,B,C,D), D>0, X1 is (-B + sqrt(D))/(2*A), X2 is (-B - sqrt(D))/(2*A).
+
+%suma 1+2+3+ ... +n
+suma(1,1).
+suma(N,S):-N1 is N-1, suma(N1,S1), S is S1+N.
+
+%2) Suma 1+1/2+1/3+ ... +1/n
+suma1(1,1).
+suma1(N,S):-N1 is N-1, suma1(N1,S1), S is S1+1/N.
+
+%3)Valorile functiei lui Ackermann
+sumaAK(M,N,R):-M=0,R is N+1.
+sumaAK(M,N,R):-N=0,M1 is M-1, sumaAK(M1,1,R).
+sumaAK(M,N,R):-N1 is N-1, sumaAK(M,N1,R1),M1 is M-1, sumaAK(M1,R1,R).
+
+%4)Valoarea functiei lui Fibonacci
+fib(1,1).
+fib(2,1).
+fib(N, F):- N1 is N-1, N2 is N-2, fib(N1, F1), fib(N2,F2), F is F1 + F2.
+
+%5) Scrieti un predicat prolog care sa calculeze valorile functiei f in punctele m si n, unde f este definita astfel:
+%f(m,n) = n^m, n<m; f(m,n) = m*n, altfel.
+pow(_,0,1).
+pow(X,Y,Z):- Y1 is Y-1, pow(X,Y1,Z1), Z is Z1*X.
+func(M,N,V):- M < N, pow(M,N,V).
+func(M,N,V):- V is M*N.
+
+%6) Sa se verifice daca un numar k este divizor al unui nr n.
+%Construiti un predicat care sa afiseze toti divizorii unui nr natural n.
+divizor(K,N):-D is N mod K, D = 0, write(K), write(" este divizor al lui "), write(N).
+divizor(K,N):-D is N mod K, D \= 0, write(K), write(" nu este divizor al lui "), write(N).
+divizorii(N):-divizorii(N,1).
+divizorii(_,N).
+divizorii(N,K):-D is N mod K, D = 0, writeln(K),K1 is K+1 divizorii(K1,N).
+divizorii(N,K):-D is N mod K, D \= 0, K1 is K+1, divizorii(K1,N).
+
+%7
+fact(1,1).
+fact(X,V):- X1 is X-1, fact(X1,V1), V is V1*X.
+func2(M,N,V):- N<M, fact(N,V1), V is M*V1.
+func2(M,N,V):- V is N-M.
+
+
+%8
+sumaLista([],0).
+sumaLista([P|Rest], S):- sumaLista(Rest, S1), S is S1+P.
+
+numarElemente([],0).
+numarElemente([_|Rest], N):- numarElemente(Rest, N1), N is N1 + 1.
+
+medieLista(L):- sumaLista(L,S), numarElemente(L,N), Medie is S/N,
+                 write("Media listei este "), write(Medie).
+
+%9
+nrElementePozitive([], 0).
+nrElementePozitive([P|Rest], N):- P >= 0, nrElementePozitive(Rest, N1), N is N1 + 1.
+nrElementePozitive([_|Rest], N):- nrElementePozitive(Rest, N).
+
+%10
+patrate([],0).
+patrate([P|Rest],S):- patrate(Rest,S1), S is S1 + P*P.
+
+
+%Prefix,Sufix,Sublista
+prefix([],_L).
+prefix([X|Rest1],[X|Rest2]):-prefix(Rest1,Rest2).
+sufix(L,L).
+sufix(L,[_Y|Rest]):-sufix(L,Rest).
+sublista(L1,L2):-prefix(L,L2), sufix(L1,L).
+
+
+%11
+maxim([P|Rest]):- Max is P, maxim1(Rest, Max).
+maxim1([], Max):- write("Maximul este "), write(Max).
+maxim1([P|R], Max):- P>Max, maxim1(R, P).
+maxim1([_|R], Max):-maxim1(R, Max).
+
+%Poz Maximului unei liste
+poz_max([P|Rest]):-poz_max(Rest,P,1,1).
+poz_max([],_,_,Poz):-write('Maximul se gaseste pe pozitia '), write(Poz).
+poz_max([P|R],Max,Contor,Poz):-Contor1 is Contor + 1, Max < P, poz_max(R,P,Contor1, Contor1).
+poz_max([_|R],Max,Contor,Poz):-Contor1 is Contor + 1, poz_max(R,Max,Contor1,Poz).
+
+%12
+poz_min([P|Rest]):-poz_min(Rest,P,1,1).
+poz_min([],_,_,Poz):- write("Minimul se gaseste pe pozitia "), write(Poz).
+poz_min([P|R],Min,Contor,Poz):-Contor1 is Contor + 1, P < Min, poz_min(R,P,Contor1, Contor1).
+poz_min([_|R],Min,Contor,Poz):-Contor1 is Contor + 1, poz_min(R,Min,Contor1,Poz).
+
+%13
+compar([], []):- write("Listele au aceeasi lungime").
+compar(_L, []):- write("Prima lista are mai multe elemente").
+compar([], _L):- write("A doua lista are mai multe elemente").
+compar([_|R1],[_|R2]):-compar(R1,R2).
+
+%14
+inv(L, Linv):-inv1(L,[],Linv).
+inv1([],L,L).
+inv1([X|Rest],Temp,Linv):-inv1(Rest,[X|Temp],Linv).
+
+%15
+stergere([],_,[]).
+stergere([N|Rest],N,Rez):-stergere(Rest,N,Rez).
+stergere([M|Rest],N,[M|Rez]):-stergere(Rest,N,Rez).
+
+%16
+sublistaPozPare([],[]).
+sublistaPozPare([X],[]).
+sublistaPozPare([X,Y|Rest],[Y|RPar]):-sublistaPozPare(Rest,RPar).
+
+%17
+sufixPrefix17(Prefix,LPrefix,LSufix):- prefix(Prefix,LPrefix),sufix(Prefix,LSufix).
+
+%18
+consecutive(L,X,Y):- sublista([X,Y],L).
+
+%19
+apartine(X,[X|_]).
+apartine(X,[Y|Rest]):-apartine(X,Rest).
+verifMultime([X|Rest]):-apartine(X,Rest).
+
+%20
+duplicate([],[]).
+duplicate([X|Rest1],L):-apartine(X,Rest1), duplicate(Rest1,L).
+duplicate([X|Rest1],[X|Rest2]):-duplicate(Rest1,Rest2).
+
+%22
+produsScalar([],[],0).
+produsScalar([P1|R1],[P2|R2],Prod):-produsScalar(R1,R2,Prod1), Prod is P1*P2+Prod1.
+
+%23
+interclasez([],L,L).
+interclasez(L,[],L).
+interclasez([P1|R1],[P2|R2],[P1|R3]):-P1<P2, interclasez(R1,[P2|R2],R3).
+interclasez([P1|R1],[P1|R2],[P1|R3]):-interclasez(R1,R2,R3).
+interclasez([P1|R1],[P2|R2],[P2|R3]):-interclasez([P1|R1],R2,R3).
+
+%24
+listePareImpare([],[],[]).
+listePareImpare([P|R],[P|R1],R2):- 0 is P mod 2, listePareImpare(R,R1,R2).
+listePareImpare([P|R],R1,[P|R2]):- listePareImpare(R,R1,R2).
+
+%25
+adaugareSfarsitLista([],A,[A]).
+adaugareSfarsitLista([X|R1],A,[X|R2]):-adaugareSfarsitLista(R1,A,R2).
+
+%26
+elementPozI([X|_],1,X).
+elementPozI([P|R],Poz,X):-Poz1 is Poz - 1, elementPozI(R,Poz1,X).
+
+%27
+pozElementului(L,X,Poz):-pozElementului(L,X,1,Poz).
+pozElementului([X|_],X,P,P).
+pozElementului([_|R],X,Counter,Poz):- Counter1 is Counter + 1, pozElementului(R,X,Counter1,Poz).
+
+%28
+pozParImpar([],[],[]).
+pozParImpar([X],[X],[]).
+pozParImpar([X,Y|Rest],[X|RImpar],[Y|RPar]):-pozParImpar(Rest,RImpar,RPar).
